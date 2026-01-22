@@ -1,4 +1,4 @@
-import 'package:evently_c17/ui/event_dm.dart';
+import 'package:evently_c17/ui/model/event_dm.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +72,7 @@ class EventWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        Icon(eventDM.isFavorite ? Icons.favorite : Icons.favorite_border, color: AppColors.blue,),
+        Icon(false ? Icons.favorite : Icons.favorite_border, color: AppColors.blue,),
       ],
     ),
   );

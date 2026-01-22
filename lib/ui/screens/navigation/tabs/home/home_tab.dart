@@ -1,4 +1,5 @@
-import 'package:evently_c17/ui/event_dm.dart';
+import 'package:evently_c17/ui/model/event_dm.dart';
+import 'package:evently_c17/ui/model/user_dm.dart';
 import 'package:evently_c17/ui/utils/app_assets.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
@@ -45,7 +46,7 @@ class HomeTab extends StatelessWidget {
           ],
         ),
         Text(
-          "John Safwat",
+          UserDM.currentUser!.name,
           textAlign: TextAlign.start,
           style: AppTextStyles.black20SemiBold,
         ),
@@ -73,11 +74,11 @@ class HomeTab extends StatelessWidget {
             icon: Icons.bike_scooter,
           );
           var eventDM = EventDM(
+            ownerId: "",
             categoryDM: category,
             dateTime: DateTime.now(),
             title: "Meeting for Updating The Development Method ",
             description: "",
-            isFavorite: false,
           );
           return EventWidget(eventDM: eventDM);
         },

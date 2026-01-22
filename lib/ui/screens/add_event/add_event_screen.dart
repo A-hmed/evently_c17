@@ -1,4 +1,4 @@
-import 'package:evently_c17/ui/event_dm.dart';
+import 'package:evently_c17/ui/model/event_dm.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
 import 'package:evently_c17/ui/utils/constants.dart';
@@ -18,6 +18,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
   CategoryDM selectedCategory = AppConstants.customCategories[0];
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         style: AppTextStyles.black16Medium,
                       ),
                       SizedBox(height: 8),
-                      AppTextField(hint: "Event Title"),
+                      AppTextField(
+                        hint: "Event Title",
+                        controller: titleController,
+                      ),
                       SizedBox(height: 16),
                       Text(
                         "Description",
@@ -66,7 +71,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         style: AppTextStyles.black16Medium,
                       ),
                       SizedBox(height: 8),
-                      AppTextField(hint: "Event Description....", minLines: 4),
+                      AppTextField(
+                        hint: "Event Description....",
+                        minLines: 4,
+                        controller: descriptionController,
+                      ),
                       SizedBox(height: 16),
                       buildChooseDateRow(),
                       SizedBox(height: 16),
@@ -139,5 +148,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
     ],
   );
 
-  buildAddEventButton() => EventlyButton(text: "Add Event", onPress: () {});
+  buildAddEventButton() => EventlyButton(
+    text: "Add Event",
+    onPress: () {
+      // EventDM eventDM = EventDM(
+      //   ownerId: ,
+      //   categoryDM: selectedCategory,
+      //   dateTime: selectedDate,
+      //   title: titleController.text,
+      //   description: descriptionController.text,
+      // );
+    },
+  );
 }

@@ -1,13 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evently_c17/l10n/app_localizations.dart';
+import 'package:evently_c17/ui/model/user_dm.dart';
 import 'package:evently_c17/ui/utils/app_assets.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
 import 'package:evently_c17/ui/utils/app_dialogs.dart';
 import 'package:evently_c17/ui/utils/app_routes.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
-import 'package:evently_c17/ui/widgets/app_text_field.dart';
+import 'package:evently_c17/ui/widgets/app_textfield.dart';
 import 'package:evently_c17/ui/widgets/evently_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../utils/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +22,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +46,15 @@ class _LoginScreenState extends State<LoginScreen> {
               AppTextField(
                 hint: localization.emailHint,
                 prefixIcon: SvgPicture.asset(AppAssets.icEmailSvg),
+                controller: emailController,
               ),
               SizedBox(height: 16),
               AppTextField(
                 hint: localization.passwordHint,
                 suffixIcon: SvgPicture.asset(AppAssets.icEyeClosedSvg),
                 prefixIcon: SvgPicture.asset(AppAssets.icLockSvg),
+                isPassword: true,
+                controller: passwordController,
               ),
               SizedBox(height: 8),
               Text(
@@ -65,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                       localization.dontHaveAccount,
+                      localization.dontHaveAccount,
                       style: AppTextStyles.grey14Regular,
                     ),
                     Text(
@@ -101,15 +111,51 @@ class _LoginScreenState extends State<LoginScreen> {
   EventlyButton buildLoginButton() => EventlyButton(
     text: AppLocalizations.of(context)!.login,
     onPress: () async {
-      showLoading(context);
-      await Future.delayed(Duration(seconds: 1));
-      Navigator.pop(context);
-      showMessage(
-        context,
-        "Please try again later",
-        posText: "ok",
-        onPosClick: () {},
-      );
+      try {
+        showLoading(context);
+        final credential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: emailController.text, //access text inside textfield
+              password: passwordController.text,
+            );
+        UserDM.currentUser = await getUserFromFirestore(credential.user!.uid);
+        Navigator.pop(context);
+
+        ///Hide loading
+        Navigator.push(context, AppRoutes.navigation);
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        var message = "";
+        if (e.code == 'user-not-found') {
+          message = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          message = 'Wrong password provided for that user.';
+        } else {
+          message = e.message ?? AppConstants.defaultErrorMessage;
+        }
+        showMessage(context, message, title: "Error", posText: "ok");
+      } catch (e) {
+        showMessage(
+          context,
+          AppConstants.defaultErrorMessage,
+          title: "Error",
+          posText: "ok",
+        );
+      }
     },
   );
+
+  Future<UserDM> getUserFromFirestore(String uid) async {
+    var userCollection = FirebaseFirestore.instance.collection("users");
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    Map json = snapshot.data() as Map;
+    UserDM user = UserDM(
+      id: uid,
+      name: json["name"],
+      email: emailController.text,
+      address: json["address"],
+      phoneNumber: json["phone_number"],
+    );
+    return user;
+  }
 }
