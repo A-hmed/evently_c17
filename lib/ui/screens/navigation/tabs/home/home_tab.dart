@@ -1,6 +1,6 @@
+import 'package:evently_c17/firebase_utils/firestore_utility.dart';
 import 'package:evently_c17/ui/model/event_dm.dart';
 import 'package:evently_c17/ui/model/user_dm.dart';
-import 'package:evently_c17/ui/utils/app_assets.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
 import 'package:evently_c17/ui/utils/constants.dart';
@@ -8,15 +8,48 @@ import 'package:evently_c17/ui/widgets/categories_tab_bar.dart';
 import 'package:evently_c17/ui/widgets/event_widget.dart';
 import 'package:flutter/material.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
+
+  @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  List<EventDM> events = [];
+  List<EventDM> filteredEvents = [];
+  var selectedCategory = AppConstants.allCategories[0];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        children: [buildHeader(), buildCategoriesTabBar(), buildEventsList()],
+        children: [
+          buildHeader(),
+          StreamBuilder(
+            stream: getEventsFromFirestore(),
+            builder: (context, snapshot) {
+              print("snapshot.connectionState = ${snapshot.connectionState}");
+              print("snapshot.data = ${snapshot.data}");
+              if (snapshot.hasError) {
+                return Center(child: Text(snapshot.error.toString()));
+              } else if (snapshot.hasData) {
+                events = snapshot.data!;
+                filterEvents();
+                return Expanded(
+                  child: Column(
+                    children: [
+                      buildCategoriesTabBar(),
+                      buildEventsList()],
+                  ),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ],
       ),
     );
   }
@@ -58,29 +91,30 @@ class HomeTab extends StatelessWidget {
     return CategoriesTabBar(
       categories: AppConstants.allCategories,
       onChanged: (category) {
-        print(category.name);
+        selectedCategory = category;
+        setState(() {});
       },
     );
   }
 
+  void filterEvents() {
+        if (selectedCategory != AppConstants.all) {
+      filteredEvents = events.where((event) {
+        return event.categoryDM.name == selectedCategory.name;
+      }).toList();
+      print(filteredEvents);
+    } else {
+      filteredEvents = events;
+    }
+  }
+
   buildEventsList() {
+    print("buildEventsList: ${filteredEvents}");
     return Expanded(
       child: ListView.builder(
-        itemCount: 100,
+        itemCount: filteredEvents.length,
         itemBuilder: (context, index) {
-          var category = CategoryDM(
-            name: "Sports",
-            imagePath: AppAssets.sportLight,
-            icon: Icons.bike_scooter,
-          );
-          var eventDM = EventDM(
-            ownerId: "",
-            categoryDM: category,
-            dateTime: DateTime.now(),
-            title: "Meeting for Updating The Development Method ",
-            description: "",
-          );
-          return EventWidget(eventDM: eventDM);
+          return EventWidget(eventDM: filteredEvents[index]);
         },
       ),
     );

@@ -1,4 +1,5 @@
 UserDM? currentUser;
+
 class UserDM {
   static UserDM? currentUser;
   String id;
@@ -16,4 +17,19 @@ class UserDM {
     required this.phoneNumber,
     this.favoriteEvents = const [],
   });
+
+  static UserDM fromJson(Map<String, dynamic> json){
+    return UserDM(id: json["id"], name: json["name"], email: json["email"],
+        address: json["address"], phoneNumber: json["phone_number"]);
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "email": email,
+      "address": address,
+      "phone_number": phoneNumber,
+      "favorites": favoriteEvents,
+    };
+  }
 }

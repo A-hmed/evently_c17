@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evently_c17/firebase_utils/firestore_utility.dart';
 import 'package:evently_c17/ui/model/user_dm.dart';
 import 'package:evently_c17/ui/utils/app_assets.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
@@ -164,8 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!formKey.currentState!.validate()) return;
       try {
         showLoading(context);
-        final credential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
               email: emailController.text, //access text inside textfield
               password: passwordController.text,
             );
@@ -205,22 +205,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     },
   );
-
-  Future<void> createUserInFirestore(UserDM user) async {
-    var userCollection = FirebaseFirestore.instance.collection("users");
-    // userCollection.add();
-    var emptyDoc = userCollection.doc(
-      user.id,
-    ); // create or search for doc with id
-    emptyDoc.set({
-      "id": user.id,
-      "name": user.name,
-      "email": user.email,
-      "address": user.address,
-      "phone_number": user.phoneNumber,
-      "favorites": user.favoriteEvents,
-    });
-  }
 
   EventlyButton buildGoogleSignInButton() {
     return EventlyButton(

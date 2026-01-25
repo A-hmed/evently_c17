@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evently_c17/firebase_utils/firestore_utility.dart';
 import 'package:evently_c17/ui/model/event_dm.dart';
+import 'package:evently_c17/ui/model/user_dm.dart';
 import 'package:evently_c17/ui/utils/app_colors.dart';
+import 'package:evently_c17/ui/utils/app_dialogs.dart';
 import 'package:evently_c17/ui/utils/app_styles.dart';
 import 'package:evently_c17/ui/utils/constants.dart';
 import 'package:evently_c17/ui/widgets/app_textfield.dart';
@@ -150,14 +154,27 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   buildAddEventButton() => EventlyButton(
     text: "Add Event",
-    onPress: () {
-      // EventDM eventDM = EventDM(
-      //   ownerId: ,
-      //   categoryDM: selectedCategory,
-      //   dateTime: selectedDate,
-      //   title: titleController.text,
-      //   description: descriptionController.text,
-      // );
+    onPress: () async {
+      showLoading(context);
+
+      selectedDate = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+      EventDM eventDM = EventDM(
+        id: "",
+        ownerId: UserDM.currentUser!.id,
+        categoryDM: selectedCategory,
+        dateTime: selectedDate,
+        title: titleController.text,
+        description: descriptionController.text,
+      );
+      await createEventInFirestore(eventDM);
+      Navigator.pop(context); //hide loading
+      Navigator.pop(context); //go back to navigation screen
     },
   );
 }

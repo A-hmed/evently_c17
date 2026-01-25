@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evently_c17/firebase_utils/firestore_utility.dart';
 import 'package:evently_c17/l10n/app_localizations.dart';
 import 'package:evently_c17/ui/model/user_dm.dart';
 import 'package:evently_c17/ui/utils/app_assets.dart';
@@ -118,6 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
               email: emailController.text, //access text inside textfield
               password: passwordController.text,
             );
+
         UserDM.currentUser = await getUserFromFirestore(credential.user!.uid);
         Navigator.pop(context);
 
@@ -144,18 +146,29 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     },
   );
-
-  Future<UserDM> getUserFromFirestore(String uid) async {
-    var userCollection = FirebaseFirestore.instance.collection("users");
-    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
-    Map json = snapshot.data() as Map;
-    UserDM user = UserDM(
-      id: uid,
-      name: json["name"],
-      email: emailController.text,
-      address: json["address"],
-      phoneNumber: json["phone_number"],
-    );
-    return user;
-  }
 }
+
+// saveInFirestore(){
+//   Person p = Person("ahmed", "01232132");
+//   Map<String, dynamic> map = {
+//     "name": p.name,
+//     "phone_number": p.phoneNumber
+//   };
+// }
+// getDataFromFirestore(){
+//   Map<String, dynamic> map = {
+//     "name": "ahmed",
+//     "phone_number": "01232132"
+//   };
+//   Person p =Person.fromJson();
+// }
+//
+// class Person{
+//   String name;
+//   String phoneNumber;
+//   Person(this.name, this.phoneNumber);
+//
+//    Person.fromJson(Map json){}
+//
+//   Map toJson(){}
+// }
