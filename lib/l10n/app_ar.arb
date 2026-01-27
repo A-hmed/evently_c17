@@ -1,0 +1,12 @@
+{
+  "login": "تسجيل الدخول",
+  "loginHeaderMessage": "تسجيل الدخول إلى حسابك",
+  "emailHint": "أدخل بريدك الإلكتروني",
+  "passwordHint": "أدخل كلمة المرور",
+  "forgetPassword": "هل نسيت كلمة المرور؟",
+  "dontHaveAccount": "ليس لديك حساب؟  ",
+  "signUp": "اشتراك",
+  "or": "أو",
+  "googleLogin": "تسجيل الدخول باستخدام جوجل",
+  "register": "تسجيل"
+}
