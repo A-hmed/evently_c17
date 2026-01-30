@@ -1,4 +1,4 @@
-class AppAssets {
+abstract class AppAssets {
   static const String sportDark = "assets/images/Sport.png";
   static const String sportLight = "assets/images/Sport-1.png";
   static const String meetingDark = "assets/images/Meeting.png";
@@ -20,4 +20,5 @@ class AppAssets {
   static const String icBirthdaySvg = "assets/images/ic_bitrhday.svg";
   static const String icCalendarSvg = "assets/images/ic_calendar.svg";
   static const String appLogo = "assets/images/app_logo.png";
+  static const String icEyeClosedSvg = "assets/images/ic_eye_closed.svg";
 }
